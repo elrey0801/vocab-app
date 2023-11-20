@@ -9,6 +9,7 @@ load_dotenv(dotenv_path)
 
 DATABASE_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
 print(DATABASE_URL)
+engine = None
 try:
     engine = create_engine(DATABASE_URL, echo=True)
     print('Connect DB:: OK')
