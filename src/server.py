@@ -9,6 +9,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(userRoute.router)
 app.include_router(vocabRoute.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
