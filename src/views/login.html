@@ -1,0 +1,76 @@
+{% include 'includes/head.html' %}
+<body>
+    <div class="container mt-5"  style="height: 60vh;">
+        <form action="/login" method="post" class="d-flex justify-content-center align-items-center">
+            <div style="width: 400px;">
+                <div class="row mb-5">
+                    <div class="col-12 d-flex justify-content-center ">
+                        <h2 class="display-4">Vocab Learning</h2>
+                    </div>
+                </div>  
+                <div class="row my-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <input type="text" placeholder="Username" name="username" id="username" required class="form-control form-control-lg">
+                    </div>
+                </div>
+    
+                <div class="row my-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <input type="password" placeholder="Password" name="password" id="password" required class="form-control form-control-lg">
+                    </div>
+                </div>
+                <div class="row mt-5 mb-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="login()">Login</button>
+                    </div>
+                </div>   
+            </div>
+        </form>
+
+    
+
+        <div class="container">
+            <p style="text-align: center; color: red;">{%if messages.error %}
+                <b>{{ messages.error }}</b>
+                {% endif %}</p>
+        </div>
+    </div>  
+</body>
+
+<script>
+    const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host; 
+    async function login() {
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: document.querySelector('#username').value, 
+                password: document.querySelector('#password').value
+            })
+        };
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/login', options);
+            console.log(response.status);
+            console.log(response.status == 200);
+            response = await response.json();
+            console.log(response);
+            // if(response.status == 401) {
+            //     window.location.href = HOST;
+            // }
+            // console.log(response);
+            // return {
+            //     name: response.element.name,
+            //     i: response.element.i,
+            //     p: response.element.p
+            // }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+
+</script>
+
+
+{% include './includes/end.html' %}
