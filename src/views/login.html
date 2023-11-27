@@ -30,9 +30,7 @@
     
 
         <div class="container">
-            <p style="text-align: center; color: red;">{%if messages.error %}
-                <b>{{ messages.error }}</b>
-                {% endif %}</p>
+            <p style="text-align: center; color: red;" id="error-message"></p>
         </div>
     </div>  
 </body>
@@ -51,25 +49,14 @@
         try {
             console.log(options);
             var response = await fetch(HOST + '/login', options);
-            console.log(response.status);
-            console.log(response.status == 200);
-            response = await response.json();
-            console.log(response);
-            // if(response.status == 401) {
-            //     window.location.href = HOST;
-            // }
-            // console.log(response);
-            // return {
-            //     name: response.element.name,
-            //     i: response.element.i,
-            //     p: response.element.p
-            // }
+            if(response.status == 200) window.location.href = HOST + "/"
+            else if(response.status == 401) {
+                document.querySelector('#error-message').innerHTML = `<b>Invalid username or password</b>`
+            }
         } catch (e) {
             console.log(e);
         }
     }
-
-
 </script>
 
 

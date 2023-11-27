@@ -9,6 +9,7 @@ class Vocab(Base):
     userId = Column('user_id', Integer, ForeignKey('users.id'))
     word = Column(String(50), nullable=False)
     meaning = Column(String(100), nullable=False)
+    example = Column(String(1000))
     familiarity = Column(Integer, nullable=False, server_default='0')
     user = relationship('User', back_populates='vocabs')
 

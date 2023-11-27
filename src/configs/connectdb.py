@@ -14,7 +14,8 @@ print(DATABASE_URL)
 engine = None
 Base = declarative_base()
 try:
-    engine = create_engine(DATABASE_URL, echo=True)
+    # engine = create_engine(DATABASE_URL, echo=True)
+    engine = create_engine(DATABASE_URL, echo=False)
     if not database_exists(engine.url):
         create_database(engine.url)
         print('New DB created')

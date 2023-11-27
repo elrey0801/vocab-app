@@ -3,8 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from routers import userRoute, vocabRoute, webRoute, authRoute
 from configs.connectdb import Base, engine
+from fastapi.staticfiles import StaticFiles
 
 Base.metadata.create_all(bind=engine)
+
+
 
 app = FastAPI()
 app.include_router(userRoute.router)
@@ -19,6 +22,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/public", StaticFiles(directory="public"), name="public")
+
 
 
 

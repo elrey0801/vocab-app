@@ -9,7 +9,7 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), nullable=False, unique=True, index=True)
-    password = Column(String(50), nullable=False)
+    password = Column(String(100), nullable=False)
     status = Column(Boolean, nullable=False, server_default='0')
     vocabs = relationship('Vocab', back_populates='user')
 
