@@ -4,6 +4,12 @@ from sqlalchemy.orm import Session
 from routers import userRoute, vocabRoute, webRoute, authRoute
 from configs.connectdb import Base, engine
 from fastapi.staticfiles import StaticFiles
+import logging
+from configs.configLogging import configLogging
+configLogging()
+logger = logging.getLogger(__name__)
+
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,7 +31,7 @@ app.add_middleware(
 
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
-
+logger.info('==============================APP STARTED==============================')
 
 
 
