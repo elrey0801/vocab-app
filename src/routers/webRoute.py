@@ -8,5 +8,5 @@ router = APIRouter()
 templates = Jinja2Templates(directory="views")
 
 @router.get("/", response_class=HTMLResponse)
-async def getHomePage(request: Request, username: str = Depends(checkAuthenticated)):
-    return templates.TemplateResponse("index.html", {"request": request, "username": username})
+async def getHomePage(request: Request, authData: str = Depends(checkAuthenticated)):
+    return templates.TemplateResponse("index.html", {"request": request, "username": authData[0]['username']})

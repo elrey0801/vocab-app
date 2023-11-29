@@ -30,7 +30,7 @@ def checkAuthenticated(db: Session = Depends(getDB), access_token: str = Cookie(
         print('Token is faked')
         raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/login"})
 
-    return access_token['username']
+    return (access_token, user.id)
 
 
 def checkNotAuthenticated(db: Session = Depends(getDB), access_token: str = Cookie(None)):

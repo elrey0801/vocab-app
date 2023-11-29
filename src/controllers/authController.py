@@ -19,7 +19,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 1
 def postLogin(db: Session, data = None):
     user = db.query(userModel.User).filter(userModel.User.username == data['username']).first()
     if not user:
-        print('No User found with this username')
+        print(f'No User found with this username:: {data["username"]}')
         return JSONResponse(content="Login failed", status_code=401)
     print('User logged in:: ', user.username)
     if not bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):

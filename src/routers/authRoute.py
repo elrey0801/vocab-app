@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="views")
 async def getLogin(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "messages": {"error": ""}})
 
-@router.post("/login")
+@router.post("/login", dependencies=[Depends(checkNotAuthenticated)])
 async def postLogin(db: Session = Depends(getDB), request: Request = None):
     try:
         data = await request.json()
@@ -25,9 +25,9 @@ async def postLogin(db: Session = Depends(getDB), request: Request = None):
     except Exception as error:
         return JSONResponse(content="Login failed", status_code=401)
 
-@router.post("/logout", dependencies=[Depends(checkValidToken)])
-async def postLogout(db: Session = Depends(getDB), request: Request = None):
-    
+# @router.post("/logout", dependencies=[Depends(checkValidToken)])
+@router.post("/logout")
+async def postLogout(db: Session = Depends(getDB), request: Request = None):  
     response = JSONResponse(content="Logout successful", status_code=200)
     response.delete_cookie('access_token')
     return response
