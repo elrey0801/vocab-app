@@ -39,8 +39,7 @@ def randomUniqueChoices(population, weights, k):
 
     return list(selectedSet)
 
-def postGetTest(db: Session, data = None, authData = None):
-    numOfVocabs = data.get('numOfVocabs')
+def getTest(numOfVocabs: int, db: Session, authData = None):
     if numOfVocabs < 5:
         return JSONResponse(
             content={"message": "Get test:: failed, you have to request at least 5 vocabs to make a test"}, 

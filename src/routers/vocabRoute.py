@@ -30,11 +30,10 @@ async def deleteVocab(db: Session = Depends(getDB), request: Request = None, aut
     except:
         raise HTTPException(status_code=404, detail="error delete vocab")
 
-@router.post("/get-test")
-async def postGetTest(db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
+@router.get("/get-test/{numOfVocabs}")
+async def postGetTest(numOfVocabs: int, db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
     try:
-        data = await request.json()
-        return vocabController.postGetTest(db=db, data=data, authData=authData)
+        return vocabController.getTest(numOfVocabs=numOfVocabs, db=db, authData=authData)
     except Exception as error:
         print(error)
         raise HTTPException(status_code=404, detail="error getting test")

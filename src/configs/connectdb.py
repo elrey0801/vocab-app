@@ -14,7 +14,7 @@ load_dotenv(dotenv_path)
 
 
 DATABASE_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
-logger.info('--' + DATABASE_URL)
+logger.info('---' + DATABASE_URL)
 engine = None
 Base = declarative_base()
 try:
@@ -22,13 +22,13 @@ try:
     engine = create_engine(DATABASE_URL, echo=False)
     if not database_exists(engine.url):
         create_database(engine.url)
-        logger.info('--New DB created')
+        logger.info('---New DB created')
     else:
     # Connect the database if exists.
         engine.connect()
-        logger.info('--Connect DB:: OK')
+        logger.info('---Connect DB:: OK')
 except Exception as error:
-    logger.error('--Connect DB:: Failed')
+    logger.error('---Connect DB:: Failed')
     logger.error(error)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
