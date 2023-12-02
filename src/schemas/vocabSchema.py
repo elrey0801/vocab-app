@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 class Vocab(BaseModel):
     id: int
-    userId: int
     word: str
     meaning: str
     example: str | None = None
