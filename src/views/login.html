@@ -1,7 +1,7 @@
 {% include 'includes/head.html' %}
 <body>
     <div class="container mt-5"  style="height: 60vh;">
-        <form action="/login" method="post" class="d-flex justify-content-center align-items-center">
+        <form action="javascript:login()" method="post" class="d-flex justify-content-center align-items-center">
             <div style="width: 400px;">
                 <div class="row mb-5">
                     <div class="col-12 d-flex justify-content-center ">
@@ -21,7 +21,7 @@
                 </div>
                 <div class="row mt-5 mb-3">
                     <div class="col-12 d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary btn-lg" onclick="login()">Login</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
                     </div>
                 </div>   
             </div>

@@ -10,9 +10,12 @@ def getVocabs(db: Session, data = None):
     userId = data.get("userId")
     if not userId:
         raise HTTPException(status_code=404, detail="userId is null")
-    vocabs = db.query(vocabModel.Vocab).filter(vocabModel.Vocab.userId == userId).all()
-    content = [{"vocabId": vocab.id,"word": vocab.word, "meaning": vocab.meaning, "familiarity": vocab.familiarity} for vocab in vocabs]
-    return JSONResponse(content=content, status_code=200)
+    # vocabs = db.query(vocabModel.Vocab).filter(vocabModel.Vocab.userId == userId).all()
+    # content = [{"vocabId": vocab.id,"word": vocab.word, "meaning": vocab.meaning, "familiarity": vocab.familiarity} for vocab in vocabs]
+    # return JSONResponse(content=content, status_code=200)
+
+    return db.query(vocabModel.Vocab).filter(vocabModel.Vocab.userId == userId).all()
+
 
 
 def postVocab(db: Session, data = None): 

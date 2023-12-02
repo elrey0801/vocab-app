@@ -2,11 +2,12 @@ from fastapi import APIRouter, Request, Depends, HTTPException
 from sqlalchemy.orm import Session
 from configs.connectdb import getDB
 from controllers import vocabController
+from schemas import vocabSchema
 from middlewares.authMiddleware import checkAuthenticated
 
 router = APIRouter()
 
-@router.post("/get-vocabs/")
+@router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
 async def getVocabs(db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
     try:
         data = await request.json()
