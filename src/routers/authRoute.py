@@ -12,7 +12,6 @@ router = APIRouter()
 templates = Jinja2Templates(directory="views")
 
 @router.get("/login", response_class=HTMLResponse, dependencies=[Depends(checkNotAuthenticated)])
-# @router.get("/login", response_class=HTMLResponse)
 async def getLogin(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "messages": {"error": ""}})
 
@@ -21,7 +20,6 @@ async def postLogin(db: Session = Depends(getDB), request: Request = None):
     try:
         data = await request.json()
         return authController.postLogin(db=db, data=data)
-
     except Exception as error:
         return JSONResponse(content="Login failed", status_code=401)
 

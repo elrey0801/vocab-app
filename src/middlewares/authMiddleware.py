@@ -6,6 +6,7 @@ from models import userModel
 from configs.connectdb import getDB
 from sqlalchemy.orm import Session
 import json
+from schemas import userSchema
 import logging
 from configs.configLogging import configLogging
 configLogging()
@@ -23,18 +24,18 @@ def checkAuthenticated(db: Session = Depends(getDB), access_token: str = Cookie(
         access_token = jwt.decode(access_token, SECRET_KEY, algorithms=[SECURITY_ALGORITHM])
     except jwt.ExpiredSignatureError:
         logger.info("Token has expired.")
-        raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/login"})
+        raise HTTPException(status_code=302, detail="Redirecting...", headers={"Location": "/login"})
     except jwt.InvalidTokenError:
         logger.info("Invalid token.")
-        raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/login"})
+        raise HTTPException(status_code=302, detail="Redirecting...", headers={"Location": "/login"})
 
     user = db.query(userModel.User).filter(userModel.User.username == access_token['username']).first()
     
     if (not user) or (user.password != access_token['password']):
         logger.info("Token is faked")
-        raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/login"})
+        raise HTTPException(status_code=302, detail="Redirecting...", headers={"Location": "/login"})
 
-    return (access_token, user.id)
+    return userSchema.AuthDetail(id=user.id, username=access_token['username'], password=access_token['password'])
 
 
 def checkNotAuthenticated(db: Session = Depends(getDB), access_token: str = Cookie(None)):
@@ -48,11 +49,11 @@ def checkNotAuthenticated(db: Session = Depends(getDB), access_token: str = Cook
     except jwt.InvalidTokenError:
         return
 
-    raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/"})
+    raise HTTPException(status_code=302, detail="Redirecting...", headers={"Location": "/"})
 
 
 def checkValidToken(db: Session = Depends(getDB), access_token: str = Cookie(None)):
     try:
         jwt.decode(access_token, SECRET_KEY, algorithms=[SECURITY_ALGORITHM])
     except:
-        raise HTTPException(status_code=307, detail="Redirecting...", headers={"Location": "/login"})
+        raise HTTPException(status_code=302, detail="Redirecting...", headers={"Location": "/login"})
