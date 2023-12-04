@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-from configs.connectdb import getDB
-from controllers import authController
-from pydantic import BaseModel
-from middlewares.authMiddleware import checkNotAuthenticated, checkValidToken
+from controllers.authController import AuthController
+from middlewares.authMiddleware import checkNotAuthenticated
+from schemas import userSchema
 
 router = APIRouter()
 
@@ -15,17 +13,18 @@ templates = Jinja2Templates(directory="views")
 async def getLogin(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "messages": {"error": ""}})
 
+
 @router.post("/login", dependencies=[Depends(checkNotAuthenticated)])
-async def postLogin(db: Session = Depends(getDB), request: Request = None):
+async def postLogin(authData: userSchema.UserLogin, authController: AuthController = Depends()):
     try:
-        data = await request.json()
-        return authController.postLogin(db=db, data=data)
+        return authController.postLogin(authData=authData)
     except Exception as error:
+        print(error)
         return JSONResponse(content="Login failed", status_code=401)
 
-# @router.post("/logout", dependencies=[Depends(checkValidToken)])
+
 @router.post("/logout")
-async def postLogout(db: Session = Depends(getDB), request: Request = None):  
+async def postLogout(request: Request):  
     response = JSONResponse(content="Logout successful", status_code=200)
     response.delete_cookie('access_token')
     return response

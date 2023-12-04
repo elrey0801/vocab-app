@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+from fastapi import HTTPException
 
 
 class VocabSetID(BaseModel):
@@ -18,6 +19,12 @@ class CreateVocab(VocabSetID):
 class Vocab(VocabID, CreateVocab):
     pass
 
-class GetTestDetail(BaseModel):
+class TestDetail(VocabSetID):
     numOfVocabs: int
+
+    @validator('numOfVocabs')
+    def validateNumOfVocabs(cls, value):
+        if value < 5:
+            raise HTTPException(status_code=400, detail="Get test:: failed, you have to request at least 5 vocabs to make a test")
+        return value
 

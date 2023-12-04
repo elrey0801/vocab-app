@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
-from sqlalchemy.orm import Session
-from configs.connectdb import getDB
-from controllers import vocabController
+from fastapi import APIRouter, Depends, HTTPException
+from controllers.vocabController import VocabController
 from schemas import vocabSchema, userSchema
 from middlewares.authMiddleware import checkAuthenticated
 import logging
@@ -14,12 +12,12 @@ router = APIRouter()
 # @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab], dependencies=[Depends(checkAuthenticated)])
 @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
 async def getVocabs(
-        db: Session = Depends(getDB), 
         vocabSetDeital: vocabSchema.VocabSetID = None,
-        authData: str = Depends(checkAuthenticated)):
+        authData: str = Depends(checkAuthenticated),
+        vocabController: VocabController = Depends()):
 
     try:
-        return vocabController.getVocabs(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
+        return vocabController.getVocabs(vocabSetDeital=vocabSetDeital, authData=authData)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
@@ -27,12 +25,12 @@ async def getVocabs(
 
 @router.post("/post-vocab/")
 async def postVocab(
-        db: Session = Depends(getDB), 
         vocab: vocabSchema.CreateVocab = None, 
-        authData: str = Depends(checkAuthenticated)):
+        authData: str = Depends(checkAuthenticated),
+        vocabController: VocabController = Depends()):
 
     try:
-        return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
+        return vocabController.postVocab(vocab=vocab, authData=authData)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="error create vocab")
@@ -40,12 +38,12 @@ async def postVocab(
 
 @router.delete("/delete-vocab/")
 async def deleteVocab(
-        db: Session = Depends(getDB), 
         vocabId: vocabSchema.VocabID = None, 
-        authData: str = Depends(checkAuthenticated)):
+        authData: str = Depends(checkAuthenticated),
+        vocabController: VocabController = Depends()):
 
     try:
-        return vocabController.deleteVocab(db=db, vocabId=vocabId, authData=authData)
+        return vocabController.deleteVocab(vocabId=vocabId, authData=authData)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="error delete vocab")
@@ -53,12 +51,12 @@ async def deleteVocab(
 
 @router.post("/get-test/", response_model=list[vocabSchema.Vocab])
 async def postGetTest(
-    db: Session = Depends(getDB), 
-    testDetail: vocabSchema.GetTestDetail = None, 
-    authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+    testDetail: vocabSchema.TestDetail = None, 
+    authData: userSchema.AuthDetail = Depends(checkAuthenticated),
+    vocabController: VocabController = Depends()):
 
     try:
-        return vocabController.postGetTest(db=db, testDetail=testDetail, authData=authData)
+        return vocabController.postGetTest(testDetail=testDetail, authData=authData)
     except Exception as error:
         print(error)
         raise HTTPException(status_code=404, detail="error getting test")
