@@ -14,15 +14,29 @@ router = APIRouter()
 # @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab], dependencies=[Depends(checkAuthenticated)])
 @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
 async def getVocabs(
-        db: Session = Depends(getDB), 
         vocabSetDeital: vocabSchema.VocabSetID = None,
-        authData: str = Depends(checkAuthenticated)):
+        authData: str = Depends(checkAuthenticated),
+        vocabController = Depends(vocabController.VocabController) ):
 
-    try:
-        return vocabController.getVocabs(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
+    # try:
+    #     return vocabController.VocabController.getVocabs(vocabSetDeital=vocabSetDeital, authData=authData)
+    # except Exception as e:
+    #     logger.error(e)
+    #     raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
+    return vocabController.getVocabs(vocabSetDeital=vocabSetDeital, authData=authData)
+
+
+# @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
+# async def getVocabs(
+#         db: Session = Depends(getDB), 
+#         vocabSetDeital: vocabSchema.VocabSetID = None,
+#         authData: str = Depends(checkAuthenticated)):
+
+#     try:
+#         return vocabController.getVocabs(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
+#     except Exception as e:
+#         logger.error(e)
+#         raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
 
 
 @router.post("/post-vocab/")

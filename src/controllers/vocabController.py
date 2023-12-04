@@ -1,22 +1,39 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
 from models import vocabModel, vocabSetModel
 from schemas import vocabSchema, userSchema
-from configs.connectdb import engine
+from configs.connectdb import engine, getDB
 from utils import utils
 
-# Check vocab set belongs to the requesting user
-def checkPosses(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail):
-    thisVocabSet = db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetDeital.vocabSetId).first()
-    if thisVocabSet.userId !=  authData.id:
-        raise HTTPException(status_code=404, detail="checkPosses failed:: user doesnt have such vocab set")
+class VocabController:
+    db: Session = None
+    def __init__(self, db: Session = Depends(getDB)):
+        VocabController.db = db
+
+    # Check vocab set belongs to the requesting user
+    @classmethod
+    def checkPosses(cls, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail):
+        thisVocabSet = cls.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetDeital.vocabSetId).first()
+        if thisVocabSet.userId !=  authData.id:
+            raise HTTPException(status_code=404, detail="checkPosses failed:: user doesnt have such vocab set")
+
+    @classmethod
+    def getVocabs(cls, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
+        cls.checkPosses(vocabSetDeital=vocabSetDeital, authData=authData)
+        return cls.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
 
 
-def getVocabs(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
-    checkPosses(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
-    return db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
+# def checkPosses(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail):
+#     thisVocabSet = db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetDeital.vocabSetId).first()
+#     if thisVocabSet.userId !=  authData.id:
+#         raise HTTPException(status_code=404, detail="checkPosses failed:: user doesnt have such vocab set")
+
+
+# def getVocabs(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
+#     checkPosses(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
+#     return db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
 
 
 def postVocab(db: Session, vocab: vocabSchema.CreateVocab, authData: userSchema.AuthDetail = None): 
