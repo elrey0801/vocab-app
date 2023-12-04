@@ -12,3 +12,4 @@ class VocabSetController:
 
     def getVocabSets(self, authData: userSchema.AuthDetail):
         return self.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.userId == authData.id).all()
+        
