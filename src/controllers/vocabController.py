@@ -32,9 +32,10 @@ def postVocab(db: Session, vocab: vocabSchema.CreateVocab, authData: userSchema.
     db.refresh(item)
     return JSONResponse(content={"message": "Vocab created:: ok"}, status_code=201)
 
-def deleteVocab(db: Session, data = None):
-    deleteVocabId = data.get("vocabId")
-    deleteVocab= db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == deleteVocabId).first()
+
+def deleteVocab(db: Session, vocabId: vocabSchema.VocabID, authData: userSchema.AuthDetail = None):
+    checkPosses(db=db, vocabSetDeital=vocabId, authData=authData)
+    deleteVocab= db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == vocabId.id).first()
     db.delete(deleteVocab)
     db.commit()
     return JSONResponse(content={"message": "Vocab deleted:: ok"}, status_code=202)

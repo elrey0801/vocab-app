@@ -23,27 +23,33 @@ async def getVocabs(
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
-    
+
+
 @router.post("/post-vocab/")
 async def postVocab(
         db: Session = Depends(getDB), 
         vocab: vocabSchema.CreateVocab = None, 
         authData: str = Depends(checkAuthenticated)):
 
-    # try:
-    #     return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
-    # except Exception as e:
-    #     logger.error(e)
-    #     raise HTTPException(status_code=404, detail="error create vocab")
-    return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
+    try:
+        return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(status_code=404, detail="error create vocab")
+
 
 @router.delete("/delete-vocab/")
-async def deleteVocab(db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
+async def deleteVocab(
+        db: Session = Depends(getDB), 
+        vocabId: vocabSchema.VocabID = None, 
+        authData: str = Depends(checkAuthenticated)):
+
     try:
-        data = await request.json()
-        return vocabController.deleteVocab(db=db, data=data)
-    except:
+        return vocabController.deleteVocab(db=db, vocabId=vocabId, authData=authData)
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(status_code=404, detail="error delete vocab")
+
 
 @router.post("/get-test/", response_model=list[vocabSchema.Vocab])
 async def postGetTest(
