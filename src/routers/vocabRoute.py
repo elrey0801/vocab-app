@@ -4,24 +4,38 @@ from configs.connectdb import getDB
 from controllers import vocabController
 from schemas import vocabSchema, userSchema
 from middlewares.authMiddleware import checkAuthenticated
+import logging
+from configs.configLogging import configLogging
+configLogging()
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 # @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab], dependencies=[Depends(checkAuthenticated)])
-@router.get("/get-vocabs/", response_model=list[vocabSchema.Vocab])
-async def getVocabs(db: Session = Depends(getDB), authData: str = Depends(checkAuthenticated)):
+@router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
+async def getVocabs(
+        db: Session = Depends(getDB), 
+        vocabSetDeital: vocabSchema.VocabSetID = None,
+        authData: str = Depends(checkAuthenticated)):
+
     try:
-        return vocabController.getVocabs(db=db, authData=authData)
-    except:
-        raise HTTPException(status_code=404, detail="error getting vocabs")
+        return vocabController.getVocabs(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
     
 @router.post("/post-vocab/")
-async def postVocab(db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
-    try:
-        data = await request.json()
-        return vocabController.postVocab(db=db, data=data)
-    except:
-        raise HTTPException(status_code=404, detail="error create vocab")
+async def postVocab(
+        db: Session = Depends(getDB), 
+        vocab: vocabSchema.CreateVocab = None, 
+        authData: str = Depends(checkAuthenticated)):
+
+    # try:
+    #     return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
+    # except Exception as e:
+    #     logger.error(e)
+    #     raise HTTPException(status_code=404, detail="error create vocab")
+    return vocabController.postVocab(db=db, vocab=vocab, authData=authData)
 
 @router.delete("/delete-vocab/")
 async def deleteVocab(db: Session = Depends(getDB), request: Request = None, authData: str = Depends(checkAuthenticated)):
@@ -34,7 +48,7 @@ async def deleteVocab(db: Session = Depends(getDB), request: Request = None, aut
 @router.post("/get-test/", response_model=list[vocabSchema.Vocab])
 async def postGetTest(
     db: Session = Depends(getDB), 
-    testDetail: vocabSchema.TestDetail = None, 
+    testDetail: vocabSchema.GetTestDetail = None, 
     authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
 
     try:

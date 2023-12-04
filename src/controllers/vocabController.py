@@ -2,21 +2,31 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
-from models import vocabModel
+from models import vocabModel, vocabSetModel
 from schemas import vocabSchema, userSchema
 from configs.connectdb import engine
 from utils import utils
 
+# Check vocab set belongs to the requesting user
+def checkPosses(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail):
+    thisVocabSet = db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetDeital.vocabSetId).first()
+    if thisVocabSet.userId !=  authData.id:
+        raise HTTPException(status_code=404, detail="checkPosses failed:: user doesnt have such vocab set")
 
-def getVocabs(db: Session, authData: userSchema.AuthDetail = None):
-    userId = authData.id
-    if not userId:
-        raise HTTPException(status_code=404, detail="userId is null")
-    return db.query(vocabModel.Vocab).filter(vocabModel.Vocab.userId == userId).all()
+
+def getVocabs(db: Session, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
+    checkPosses(db=db, vocabSetDeital=vocabSetDeital, authData=authData)
+    return db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
 
 
-def postVocab(db: Session, data = None): 
-    item = vocabModel.Vocab(userId=data.get("userId"), word=data.get("word"), meaning=data.get("meaning"))
+def postVocab(db: Session, vocab: vocabSchema.CreateVocab, authData: userSchema.AuthDetail = None): 
+    checkPosses(db=db, vocabSetDeital=vocab, authData=authData)
+    item = vocabModel.Vocab(
+        word=vocab.word, 
+        meaning=vocab.meaning, 
+        example=vocab.example, 
+        familiarity=vocab.familiarity,
+        vocabSetId=vocab.vocabSetId)
     db.add(item)
     db.commit()
     db.refresh(item)
@@ -30,7 +40,7 @@ def deleteVocab(db: Session, data = None):
     return JSONResponse(content={"message": "Vocab deleted:: ok"}, status_code=202)
 
 
-def postGetTest(db: Session, testDetail: vocabSchema.TestDetail = None, authData: userSchema.AuthDetail = None):
+def postGetTest(db: Session, testDetail: vocabSchema.GetTestDetail = None, authData: userSchema.AuthDetail = None):
     if testDetail.numOfVocabs < 5:
         return JSONResponse(
             content={"message": "Get test:: failed, you have to request at least 5 vocabs to make a test"}, 
