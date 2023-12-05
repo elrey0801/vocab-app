@@ -1,7 +1,13 @@
 from pydantic import BaseModel
 
-class VocabSet(BaseModel):
-    userId: int
+class VocabSetID(BaseModel):
+    id: int
+
+class CreateVocabSet(BaseModel):
     vocabSetName: str
-    class Config:
-        from_attributes = True
+
+class VocabSet(VocabSetID, CreateVocabSet):
+    pass
+
+class UpdateVocabSet(VocabSetID):
+    vocabSetNewName: str

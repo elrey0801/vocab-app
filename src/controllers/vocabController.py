@@ -5,17 +5,11 @@ from models import vocabModel, vocabSetModel
 from schemas import vocabSchema, userSchema
 from configs.connectdb import getDB
 from utils import utils
+from utils.vocabUtils import VocabUtils
 
-class VocabController:
+class VocabController(VocabUtils):
     def __init__(self, db: Session = Depends(getDB)):
         self.db = db
-
-    # Check vocab set belongs to the requesting user
-    def checkPosses(self, vocabSetId: int, authData: userSchema.AuthDetail):
-        thisVocabSet = self.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetId).first()
-        if thisVocabSet.userId !=  authData.id:
-            raise HTTPException(status_code=404, detail="checkPosses failed:: user doesnt have such vocab set")
-
 
     def getVocabs(self, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
         self.checkPosses(vocabSetId=vocabSetDeital.vocabSetId, authData=authData)
@@ -38,14 +32,13 @@ class VocabController:
 
     def deleteVocab(self, vocabId: vocabSchema.VocabID, authData: userSchema.AuthDetail = None):
         self.checkPosses(vocabSetId=vocabId.vocabSetId, authData=authData)
-        deleteVocab= self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == vocabId.id).first()
+        deleteVocab = self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == vocabId.id).first()
         self.db.delete(deleteVocab)
         self.db.commit()
         return JSONResponse(content={"message": "Vocab deleted:: ok"}, status_code=202)
 
 
     def postGetTest(self, testDetail: vocabSchema.TestDetail = None, authData: userSchema.AuthDetail = None):
-        # checkAuthenticated => (access_token, user.id)
         self.checkPosses(vocabSetId=testDetail.vocabSetId, authData=authData)
         vocabSet = self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == testDetail.vocabSetId).all()
         if len(vocabSet) < 5:

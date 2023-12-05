@@ -18,6 +18,9 @@ async def getVocabs(
 
     try:
         return vocabController.getVocabs(vocabSetDeital=vocabSetDeital, authData=authData)
+    except HTTPException as error:
+        logger.error(error.detail)
+        raise error
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
@@ -31,6 +34,9 @@ async def postVocab(
 
     try:
         return vocabController.postVocab(vocab=vocab, authData=authData)
+    except HTTPException as error:
+        logger.error(error.detail)
+        raise error
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="error create vocab")
@@ -44,6 +50,9 @@ async def deleteVocab(
 
     try:
         return vocabController.deleteVocab(vocabId=vocabId, authData=authData)
+    except HTTPException as error:
+        logger.error(error.detail)
+        raise error
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="error delete vocab")
@@ -57,6 +66,9 @@ async def postGetTest(
 
     try:
         return vocabController.postGetTest(testDetail=testDetail, authData=authData)
+    except HTTPException as error:
+        logger.error(error.detail)
+        raise error
     except Exception as error:
         print(error)
         raise HTTPException(status_code=404, detail="error getting test")
