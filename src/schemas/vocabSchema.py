@@ -14,10 +14,11 @@ class CreateVocab(VocabSetID):
     word: str
     meaning: str
     example: str | None = None
-    familiarity: int
+    
     
 class Vocab(VocabID, CreateVocab):
-    pass
+    familiarity: int
+
 
 class TestDetail(VocabSetID):
     numOfVocabs: int
@@ -25,6 +26,6 @@ class TestDetail(VocabSetID):
     @validator('numOfVocabs')
     def validateNumOfVocabs(cls, value):
         if value < 5:
-            raise HTTPException(status_code=400, detail="Get test:: failed, you have to request at least 5 vocabs to make a test")
+            raise HTTPException(status_code=422, detail="Get test:: failed, you have to request at least 5 vocabs to make a test")
         return value
 

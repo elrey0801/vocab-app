@@ -8,6 +8,3 @@ class CreateVocabSet(BaseModel):
 
 class VocabSet(VocabSetID, CreateVocabSet):
     pass
-
-class UpdateVocabSet(VocabSetID):
-    vocabSetNewName: str

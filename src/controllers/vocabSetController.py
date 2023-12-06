@@ -22,12 +22,11 @@ class VocabSetController(VocabUtils):
         self.db.refresh(item)
         return JSONResponse(content={"message": "VocabSet created:: ok"}, status_code=201)
     
-    def putVocabSet(self, vocabSetDetail: vocabSetSchema.UpdateVocabSet, authData: userSchema.AuthDetail):
+    def putVocabSet(self, vocabSetDetail: vocabSetSchema.VocabSet, authData: userSchema.AuthDetail):
         self.checkPosses(vocabSetDetail.id, authData)
 
-        item = self.db.query(vocabSetModel.VocabSet).filter(and_(
-            userIdCondition, vocabSetIdCondition
-            )).update({vocabSetModel.VocabSet.vocabSetName: vocabSetDetail.vocabSetNewName})
+        item = self.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetDetail.id)
+        item.update({vocabSetModel.VocabSet.vocabSetName: vocabSetDetail.vocabSetName})
 
         self.db.commit()
         return JSONResponse(content={"message": "VocabSet updated:: ok"}, status_code=201)
