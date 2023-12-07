@@ -11,9 +11,9 @@ class VocabController(VocabUtils):
     def __init__(self, db: Session = Depends(getDB)):
         self.db = db
 
-    def getVocabs(self, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail):
-        self.checkPosses(vocabSetId=vocabSetDeital.vocabSetId, authData=authData)
-        return self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
+    def getVocabs(self, vocabSetId: int, authData: userSchema.AuthDetail):
+        self.checkPosses(vocabSetId=vocabSetId, authData=authData)
+        return self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetId).all()
 
 
     def postVocab(self, vocab: vocabSchema.CreateVocab, authData: userSchema.AuthDetail): 

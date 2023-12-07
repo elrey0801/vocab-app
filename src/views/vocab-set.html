@@ -1,0 +1,61 @@
+{% include 'includes/head.html' %}
+</head>
+
+<body>
+    {% include './includes/navigation.html'%}
+    <div class="container-fluid">
+        <div class="row py-3 justify-content-center align-items-center">
+            <div class="col-lg-6 d-flex list-group" id="list-group">
+
+                <button type="button" onclick="" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                    <img src="{{ url_for('public', path='/img/logo.png') }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                      <div>
+                        <h6 class="mb-0">List group item heading</h6>
+                        <p class="mb-0 opacity-75">Some placeholder content in a paragraph.</p>
+                      </div>
+                      <small class="opacity-50 text-nowrap">now</small>
+                    </div>
+                  </button>
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host; 
+    group = document.querySelector('#list-group');
+    async function getVocabSetList() {
+        const options = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/get-vocabsets', options);
+            if(response.status == 200) {
+                response = await response.json();
+                console.log(response);
+                var element = "";
+                for(var res of response) {
+                    element += `
+                    <button type="button" onclick="" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                        <img src="{{ url_for('public', path='/img/logo.png') }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                        <div class="d-flex gap-2 w-100 align-items-center">
+                            <h6 class="mb-0 fw-bold">${res.vocabSetName}</h6>
+                        </div>
+                    </button>`
+                }
+                group.innerHTML = element;
+            }
+            else if(response.status == 422) {
+                console.log('Validation Error');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    getVocabSetList();
+</script>
+
+{% include './includes/end.html' %}

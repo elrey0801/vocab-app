@@ -11,14 +11,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # @router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab], dependencies=[Depends(checkAuthenticated)])
-@router.post("/get-vocabs/", response_model=list[vocabSchema.Vocab])
+@router.get("/get-vocabs/{vocabSetId}", response_model=list[vocabSchema.Vocab])
 async def getVocabs(
-        vocabSetDeital: vocabSchema.VocabSetID = None,
+        vocabSetId: int,
         authData: userSchema.AuthDetail = Depends(checkAuthenticated),
         vocabController: VocabController = Depends()):
 
     try:
-        return vocabController.getVocabs(vocabSetDeital=vocabSetDeital, authData=authData)
+        return vocabController.getVocabs(vocabSetId=vocabSetId, authData=authData)
     except HTTPException as error:
         logger.error(error.detail)
         raise error
