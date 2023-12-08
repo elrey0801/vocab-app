@@ -36,7 +36,7 @@
 </body>
 
 <script>
-    const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host; 
+    const HOST = window.location.hostname == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.hostname; 
     async function login() {
         const options = {
             method: 'POST',

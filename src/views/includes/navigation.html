@@ -15,7 +15,7 @@
             <a class="nav-link" href="/test">Test</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/vocab-set">Vocab Set</a>
+            <a class="nav-link" href="/vocab-set">VocabSet</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -43,7 +43,7 @@
   </nav>
   <script>
     async function logout() {
-      const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host;
+      const HOST = window.location.hostname == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.hostname;
       const options = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

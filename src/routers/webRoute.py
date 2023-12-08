@@ -17,5 +17,9 @@ async def getTestPage(request: Request, authData: userSchema.AuthDetail = Depend
     return templates.TemplateResponse("test.html", {"request": request, "username": authData.username})
 
 @router.get("/vocab-set", response_class=HTMLResponse)
-async def getTestPage(request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+async def getVocabSetPage(request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
     return templates.TemplateResponse("vocab-set.html", {"request": request, "username": authData.username})
+
+@router.get("/vocabs/{vocabSetId}", response_class=HTMLResponse)
+async def getVocabPage(vocabSetId: int, request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+    return templates.TemplateResponse("vocabs.html", {"request": request, "username": authData.username, "vocabSetId": vocabSetId})
