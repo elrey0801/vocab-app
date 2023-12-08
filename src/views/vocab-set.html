@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row py-3  justify-content-center align-items-center">
             <div class="col-lg-6 d-flex justify-content-center align-items-center">
-                <button type="button" class="btn btn-outline-primary">Create New Vocab List</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createNewVocabSetModal">Create New Vocab List</button>
             </div>
         </div>
 
@@ -34,45 +34,55 @@
 
 
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data="@mdo">Open modal for @mdo</button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data="@fat">Open modal for @fat</button>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data="@getbootstrap">Open modal for @getbootstrap</button>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal fade" id="changeVocabSetNameModal" tabindex="-1" aria-labelledby="changeVocabSetNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+            <h5 class="modal-title" id="changeVocabSetNameModalLabel">New VocabSet name</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <form>
             <div class="mb-3">
-                <label for="recipient-name" class="col-form-label">New name:</label>
-                <input type="text" class="form-control" id="recipient-name">
+                <label for="vocabSetNewName" class="col-form-label">New name:</label>
+                <input type="text" class="form-control" id="vocabSetNewName">
             </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Change VocabSet Name</button>
+            <button type="button" class="btn btn-primary" onclick="changeVocabSetName()">Change VocabSet Name</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>   
         </div>
         </div>
     </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
+    <div class="modal fade" id="createNewVocabSetModal" tabindex="-1" aria-labelledby="createNewVocabSetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createNewVocabSetModalLabel">New VocabSet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                <div class="mb-3">
+                    <label for="createVocabSet" class="col-form-label">VocabSet name:</label>
+                    <input type="text" class="form-control" id="createVocabSet">
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="createNewVocabSet()">Create</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>   
+            </div>
+            </div>
+        </div>
+        </div>
 
 </body>
+
 <script>
     const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host; 
     group = document.querySelector('#list-group');
@@ -93,16 +103,16 @@
                     <div class="container">
                         <div class="row py-2 justify-content-center align-items-center">
                             <div class="list-group">
-                                <div type="button" onclick="" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true" data-bs-toggle="modal" data-bs-target="#exampleModal" vocabSetName="${res.vocabSetName}" vocabSetId="${res.id}">
+                                <a href="#" type="button" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                     <img src="{{ url_for('public', path='/img/logo.png') }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
                                     <div class="d-flex gap-2 w-100 align-items-center">
                                         <h6 class="mb-0 fw-bold" vocabSetName="${res.vocabSetName}" vocabSetId="${res.id}">${res.vocabSetName}</h6>
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-outline-success">Edit</button>
-                                        <button class="btn btn-outline-danger" onclick="deleteSet(${res.id})" type="button">Delete</button>
+                                        <button type="button" class="btn btn-outline-success"  data-bs-toggle="modal" data-bs-target="#changeVocabSetNameModal" vocabSetName="${res.vocabSetName}" vocabSetId="${res.id}">Edit</button>
+                                        <button class="btn btn-outline-danger" onclick="deleteVocabSet(${res.id})" type="button">Delete</button>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>`
@@ -117,29 +127,112 @@
         }
     }
     getVocabSetList();
+
+    async function changeVocabSetName() {
+        var data = document.querySelector('.modal-body #vocabSetNewName')
+        var vocabSetId = parseInt(data.getAttribute('vocabSetId'))
+        var vocabSetNewName = data.value
+        const options = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vocabSetName: vocabSetNewName, 
+                id: vocabSetId
+            })
+        };
+
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/update-vocabset', options);
+            if(response.status == 201) console.log('VocabSet name is changed');
+            else if(response.status == 422) {
+                console.log('Validation Error');
+            }
+            var changeVocabSetNameModal = bootstrap.Modal.getInstance(document.getElementById('changeVocabSetNameModal'))
+            changeVocabSetNameModal.hide()
+        } catch (e) {
+            console.log(e);
+        }
+        getVocabSetList();
+    }
+
+    async function deleteVocabSet(vocabSetId) {
+        const options = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: vocabSetId
+            })
+        };
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/delete-vocabset', options);
+            if(response.status == 202) console.log('VocabSet is deleted');
+            else if(response.status == 422) {
+                console.log('Validation Error');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        getVocabSetList();
+    }
+
+    async function createNewVocabSet() {
+        var data = document.querySelector('.modal-body #createVocabSet')
+        var vocabSetName = data.value
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vocabSetName: vocabSetName, 
+            })
+        };
+
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/post-vocabset', options);
+            if(response.status == 201) console.log('VocabSet created');
+            else if(response.status == 422) {
+                console.log('Validation Error');
+            }
+            var createNewVocabSetModal = bootstrap.Modal.getInstance(document.getElementById('createNewVocabSetModal'))
+            createNewVocabSetModal.hide()
+        } catch (e) {
+            console.log(e);
+        }
+        getVocabSetList();
+    }
 </script>
 
 
 
 
 <script>
-    var exampleModal = document.getElementById('exampleModal')
-    exampleModal.addEventListener('show.bs.modal', function (event) {
+    // reference: https://getbootstrap.com/docs/5.0/components/modal/
+    // for updating vocabSetName
+    var changeVocabSetNameModal = document.getElementById('changeVocabSetNameModal')
+    changeVocabSetNameModal.addEventListener('show.bs.modal', function (event) {
     // Button that triggered the modal
     var button = event.relatedTarget
     // Extract info from data-bs-* attributes
     var vocabSetName = button.getAttribute('vocabSetName')
+
     // If necessary, you could initiate an AJAX request here
     // and then do the updating in a callback.
     //
     // Update the modal's content.
-    var modalTitle = exampleModal.querySelector('.modal-title')
-    var modalBodyInput = exampleModal.querySelector('.modal-body input')
+    var modalTitle = changeVocabSetNameModal.querySelector('.modal-title')
+    var modalBodyInput = changeVocabSetNameModal.querySelector('.modal-body #vocabSetNewName')
 
     modalTitle.innerHTML = 'New VocabSet name for <br>@' + vocabSetName
     modalBodyInput.value = vocabSetName
+    modalBodyInput.setAttribute('vocabSetId', button.getAttribute('vocabSetId'))
     })
+</script>
 
+<script>
+    // reference: https://getbootstrap.com/docs/5.0/components/modal/
+    // for creating new vocabSet
 </script>
 
 {% include './includes/end.html' %}
