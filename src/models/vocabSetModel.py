@@ -9,7 +9,7 @@ class VocabSet(Base):
     userId = Column('user_id', Integer, ForeignKey('users.id'))
     vocabSetName = Column('vocab_set_name', String(50), nullable=False)
     user = relationship('User', back_populates='vocab_sets')
-    vocabs = relationship('Vocab', back_populates='vocab_set')
+    vocabs = relationship('Vocab', back_populates='vocab_set', cascade="all, delete")
     
 
 

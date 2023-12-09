@@ -27,7 +27,7 @@ async def getVocabs(
         raise HTTPException(status_code=404, detail="getVocabs failed:: error getting vocabs")
 
 
-@router.post("/post-vocab/")
+@router.post("/post-vocab")
 async def postVocab(
         vocab: vocabSchema.CreateVocab = None, 
         authData: userSchema.AuthDetail = Depends(checkAuthenticated),
@@ -43,7 +43,7 @@ async def postVocab(
         raise HTTPException(status_code=404, detail="error create vocab")
 
 
-@router.put("/update-vocab/")
+@router.put("/update-vocab")
 async def updateVocab(
         vocab: vocabSchema.Vocab = None, 
         authData: userSchema.AuthDetail = Depends(checkAuthenticated),
@@ -59,7 +59,7 @@ async def updateVocab(
         raise HTTPException(status_code=404, detail="error updating vocab")
 
 
-@router.delete("/delete-vocab/")
+@router.delete("/delete-vocab")
 async def deleteVocab(
         vocabId: vocabSchema.VocabID = None, 
         authData: userSchema.AuthDetail = Depends(checkAuthenticated),
@@ -75,7 +75,7 @@ async def deleteVocab(
         raise HTTPException(status_code=404, detail="error delete vocab")
 
 
-@router.post("/get-test/", response_model=list[vocabSchema.Vocab])
+@router.post("/get-test", response_model=list[vocabSchema.Vocab])
 async def postGetTest(
     testDetail: vocabSchema.TestDetail = None, 
     authData: userSchema.AuthDetail = Depends(checkAuthenticated),
