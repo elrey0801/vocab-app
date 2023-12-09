@@ -1,0 +1,68 @@
+{% include 'includes/head.html' %}
+</head>
+</head>
+<body>
+
+    {% include './includes/navigation.html'%}
+<div class="container mt-5">
+    <div id="question-container">
+        <h2>Câu hỏi 1</h2>
+        <p>Đây là nội dung của câu hỏi 1.</p>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer" id="answer1" value="option1">
+            <label class="form-check-label" for="answer1">Lựa chọn 1</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer" id="answer2" value="option2">
+            <label class="form-check-label" for="answer2">Lựa chọn 2</label>
+        </div>
+        <!-- Thêm các lựa chọn khác nếu cần -->
+
+        <button class="btn btn-primary mt-3" onclick="nextQuestion()">Tiếp theo</button>
+    </div>
+
+    <div id="result-container" style="display: none;">
+        <h2>Kết quả</h2>
+        <p id="result-message"></p>
+    </div>
+</div>
+
+<!-- Bootstrap JS và Popper.js (được yêu cầu cho Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let currentQuestion = 1;
+
+    function nextQuestion() {
+        // Xử lý câu hỏi và đáp án ở đây
+        // Có thể sử dụng JavaScript để kiểm tra đáp án và tính điểm
+
+        // Chuyển sang câu hỏi tiếp theo
+        currentQuestion++;
+        if (currentQuestion <= totalQuestions) {
+            showQuestion(currentQuestion);
+        } else {
+            showResult();
+        }
+    }
+
+    function showQuestion(questionNumber) {
+        // Hiển thị câu hỏi và các lựa chọn tương ứng
+        document.getElementById('question-container').style.display = 'block';
+        document.getElementById('result-container').style.display = 'none';
+    }
+
+    function showResult() {
+        // Hiển thị kết quả
+        document.getElementById('question-container').style.display = 'none';
+        document.getElementById('result-container').style.display = 'block';
+
+        // Có thể thay đổi nội dung kết quả dựa trên điểm số
+        document.getElementById('result-message').innerText = 'Chúc mừng, bạn đã hoàn thành trắc nghiệm!';
+    }
+</script>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</html>
+

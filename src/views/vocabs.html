@@ -1,0 +1,32 @@
+{% include 'includes/head.html' %}
+</head>
+
+<body  vocabSetId={{ vocabSetId }}>
+    {% include './includes/navigation.html'%}
+    <div class="container-fluid">
+        <div class="row py-3  justify-content-center align-items-center">
+            <div class="col-lg-6 d-flex justify-content-center align-items-center">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createNewVocabSetModal">Create New Vocab List</button>
+            </div>
+        </div>
+
+        <div class="row py-3 justify-content-center align-items-center">
+            <div class="col-lg-6 d-flex list-group" id="list-group">
+
+                <!-- <button type="button" onclick="" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                    <img src="{{ url_for('public', path='/img/logo.png') }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                      <div>
+                        <h6 class="mb-0">List group item heading</h6>
+                        <p class="mb-0 opacity-75">Some placeholder content in a paragraph.</p>
+                      </div>
+                      <small class="opacity-50 text-nowrap">now</small>
+                    </div>
+                  </button> -->
+
+            </div>
+        </div>
+    </div>
+</body>
+
+{% include './includes/end.html' %}

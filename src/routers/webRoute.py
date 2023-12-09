@@ -11,3 +11,15 @@ templates = Jinja2Templates(directory="views")
 @router.get("/", response_class=HTMLResponse)
 async def getHomePage(request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
     return templates.TemplateResponse("index.html", {"request": request, "username": authData.username})
+
+@router.get("/test", response_class=HTMLResponse)
+async def getTestPage(request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+    return templates.TemplateResponse("test.html", {"request": request, "username": authData.username})
+
+@router.get("/vocab-set", response_class=HTMLResponse)
+async def getVocabSetPage(request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+    return templates.TemplateResponse("vocab-set.html", {"request": request, "username": authData.username})
+
+@router.get("/vocabs/{vocabSetId}", response_class=HTMLResponse)
+async def getVocabPage(vocabSetId: int, request: Request, authData: userSchema.AuthDetail = Depends(checkAuthenticated)):
+    return templates.TemplateResponse("vocabs.html", {"request": request, "username": authData.username, "vocabSetId": vocabSetId})

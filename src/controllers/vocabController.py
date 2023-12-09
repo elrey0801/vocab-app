@@ -11,18 +11,17 @@ class VocabController(VocabUtils):
     def __init__(self, db: Session = Depends(getDB)):
         self.db = db
 
-    def getVocabs(self, vocabSetDeital: vocabSchema.VocabSetID, authData: userSchema.AuthDetail = None):
-        self.checkPosses(vocabSetId=vocabSetDeital.vocabSetId, authData=authData)
-        return self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetDeital.vocabSetId).all()
+    def getVocabs(self, vocabSetId: int, authData: userSchema.AuthDetail):
+        self.checkPosses(vocabSetId=vocabSetId, authData=authData)
+        return self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == vocabSetId).all()
 
 
-    def postVocab(self, vocab: vocabSchema.CreateVocab, authData: userSchema.AuthDetail = None): 
+    def postVocab(self, vocab: vocabSchema.CreateVocab, authData: userSchema.AuthDetail): 
         self.checkPosses(vocabSetId=vocab.vocabSetId, authData=authData)
         item = vocabModel.Vocab(
             word=vocab.word, 
             meaning=vocab.meaning, 
             example=vocab.example, 
-            familiarity=vocab.familiarity,
             vocabSetId=vocab.vocabSetId)
         self.db.add(item)
         self.db.commit()
@@ -30,7 +29,21 @@ class VocabController(VocabUtils):
         return JSONResponse(content={"message": "Vocab created:: ok"}, status_code=201)
 
 
-    def deleteVocab(self, vocabId: vocabSchema.VocabID, authData: userSchema.AuthDetail = None):
+    def updateVocab(self, vocab: vocabSchema.Vocab, authData: userSchema.AuthDetail):
+        self.checkPosses(vocabSetId=vocab.vocabSetId, authData=authData)
+        updateVocab = self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == vocab.id)
+        updateVocab.update({
+            vocabModel.Vocab.vocabSetId: vocab.vocabSetId,
+            vocabModel.Vocab.word: vocab.word,
+            vocabModel.Vocab.meaning: vocab.meaning,
+            vocabModel.Vocab.example: vocab.example,
+            vocabModel.Vocab.familiarity: vocab.familiarity
+        })
+        self.db.commit()
+        return JSONResponse(content={"message": "Vocab updated:: ok"}, status_code=201)
+
+
+    def deleteVocab(self, vocabId: vocabSchema.VocabID, authData: userSchema.AuthDetail):
         self.checkPosses(vocabSetId=vocabId.vocabSetId, authData=authData)
         deleteVocab = self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.id == vocabId.id).first()
         self.db.delete(deleteVocab)
@@ -38,7 +51,7 @@ class VocabController(VocabUtils):
         return JSONResponse(content={"message": "Vocab deleted:: ok"}, status_code=202)
 
 
-    def postGetTest(self, testDetail: vocabSchema.TestDetail = None, authData: userSchema.AuthDetail = None):
+    def postGetTest(self, testDetail: vocabSchema.TestDetail, authData: userSchema.AuthDetail):
         self.checkPosses(vocabSetId=testDetail.vocabSetId, authData=authData)
         vocabSet = self.db.query(vocabModel.Vocab).filter(vocabModel.Vocab.vocabSetId == testDetail.vocabSetId).all()
         if len(vocabSet) < 5:
