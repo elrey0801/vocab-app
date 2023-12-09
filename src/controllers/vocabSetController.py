@@ -9,8 +9,8 @@ from utils import utils
 from utils.vocabUtils import VocabUtils
 
 class VocabSetController(VocabUtils):
-    def __init__(self, db: Session = Depends(getDB)):
-        self.db = db
+    # def __init__(self, db: Session = Depends(getDB)):
+    #     self.db = db
 
     def getVocabSets(self, authData: userSchema.AuthDetail):
         return self.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.userId == authData.id).all()

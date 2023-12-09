@@ -8,8 +8,8 @@ from utils import utils
 from utils.vocabUtils import VocabUtils
 
 class VocabController(VocabUtils):
-    def __init__(self, db: Session = Depends(getDB)):
-        self.db = db
+    # def __init__(self, db: Session = Depends(getDB)):
+    #     self.db = db
 
     def getVocabs(self, vocabSetId: int, authData: userSchema.AuthDetail):
         self.checkPosses(vocabSetId=vocabSetId, authData=authData)

@@ -14,6 +14,17 @@ class CreateVocab(VocabSetID):
     word: str
     meaning: str
     example: str | None = None
+    @validator('word')
+    def validateVocabSetName(cls, value):
+        if len(value) == 0:
+            raise HTTPException(status_code=422, detail="Create VocabSet:: failed, word cannot be blank")
+        return value
+    
+    @validator('meaning')
+    def validateVocabSetName(cls, value):
+        if len(value) == 0:
+            raise HTTPException(status_code=422, detail="Create VocabSet:: failed, meaning cannot be blank")
+        return value
     
     
 class Vocab(VocabID, CreateVocab):

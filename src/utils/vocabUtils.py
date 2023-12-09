@@ -5,6 +5,8 @@ from schemas import userSchema
 from configs.connectdb import getDB
 
 class VocabUtils:
+    def __init__(self, db: Session = Depends(getDB)):
+        self.db = db
     # Check vocab set belongs to the requesting user
     def checkPosses(self, vocabSetId: int, authData: userSchema.AuthDetail):
         thisVocabSet = self.db.query(vocabSetModel.VocabSet).filter(vocabSetModel.VocabSet.id == vocabSetId).first()

@@ -13,7 +13,8 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '..\..', '.env')
 load_dotenv(dotenv_path)
 
 
-DATABASE_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+# DATABASE_URL = f"mysql+mysqlconnector://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+DATABASE_URL = f"mysql+mysqlconnector://remote:Tung%4021061996@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
 logger.info('---' + DATABASE_URL)
 engine = None
 Base = declarative_base()
