@@ -39,7 +39,8 @@
                 <form>
                 <div class="mb-3">
                     <p class="mb-0 opacity-75" id="vocabModal-vocabMeaning"></p><br>
-                    <p class="mb-0 opacity-75" id="vocabModal-vocabExample"></p>
+                    <p class="mb-0 opacity-75" id="vocabModal-vocabExample"></p><br>
+                    <p class="mb-0 opacity-75" id="vocabModal-vocabFamiliarity"></p>
                 </div>
                 </form>
             </div>
@@ -147,7 +148,7 @@
                             <div class="list-group col-lg-9 d-flex">
                                 <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
                                     <img src="{{ url_for('public', path='/img/logo.png') }}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
-                                    <div class="d-flex gap-2 w-100 align-items-center" data-bs-toggle="modal" data-bs-target="#vocabModal" vocabWord="${res.word}" vocabMeaning="${res.meaning}" vocabExample="${res.example ? res.example : ""}">
+                                    <div class="d-flex gap-2 w-100 align-items-center" data-bs-toggle="modal" data-bs-target="#vocabModal" vocabWord="${res.word}" vocabMeaning="${res.meaning}" vocabExample="${res.example ? res.example : ""}" vocabFamiliarity="${res.familiarity}">
                                         <h6 class="mb-0 fw-bold" vocabId="${res.id}">${res.word}</h6>
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic example">
@@ -263,10 +264,12 @@
     var vocabWord = button.getAttribute('vocabWord')
     var vocabMeaning = button.getAttribute('vocabMeaning')
     var vocabExample = button.getAttribute('vocabExample')
+    var vocabFamiliarity = button.getAttribute('vocabFamiliarity')
 
     var modalTitle = vocabModal.querySelector('.modal-title')
     vocabModal.querySelector('.modal-body #vocabModal-vocabMeaning').innerHTML = '<b>Meaning:</b> ' + vocabMeaning
     vocabModal.querySelector('.modal-body #vocabModal-vocabExample').innerHTML = '<b>Example:</b> ' + vocabExample
+    vocabModal.querySelector('.modal-body #vocabModal-vocabFamiliarity').innerHTML = '<b>Familiarity:</b> ' + vocabFamiliarity
 
     modalTitle.innerHTML = 'Vocab Info <br>@' + vocabWord
     })

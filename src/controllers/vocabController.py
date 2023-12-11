@@ -66,5 +66,8 @@ class VocabController(VocabUtils):
 
         familiarityWeight = [(11-vocab.familiarity) for vocab in vocabSet]
         returnVocabs = utils.randomUniqueChoices(vocabSet, familiarityWeight, testDetail.numOfVocabs)
+        returnVocabsMeaning = set(m.meaning for m in returnVocabs)
+        for r in returnVocabs:
+            r.option = utils.makeOptions(returnVocabsMeaning, r.meaning)
         return returnVocabs
     

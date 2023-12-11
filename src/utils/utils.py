@@ -6,3 +6,10 @@ def randomUniqueChoices(population, weights, k):
         choices = random.choices(population, weights, k=k - len(selectedSet))
         selectedSet.update(choices)
     return list(selectedSet)
+
+def makeOptions(setOfMeaning, thisMeaning):
+    copyOfSetOfMeaning = setOfMeaning.copy()
+    copyOfSetOfMeaning.discard(thisMeaning)
+    randomOption = random.sample(sorted(copyOfSetOfMeaning), 3)
+    randomOption.append(thisMeaning)
+    return randomOption

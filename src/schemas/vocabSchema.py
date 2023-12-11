@@ -30,6 +30,9 @@ class CreateVocab(VocabSetID):
 class Vocab(VocabID, CreateVocab):
     familiarity: int
 
+class TestData(Vocab):
+    option: list
+
 
 class TestDetail(VocabSetID):
     numOfVocabs: int

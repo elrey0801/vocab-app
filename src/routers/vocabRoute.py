@@ -75,7 +75,7 @@ async def deleteVocab(
         raise HTTPException(status_code=404, detail="error delete vocab")
 
 
-@router.post("/get-test", response_model=list[vocabSchema.Vocab])
+@router.post("/get-test", response_model=list[vocabSchema.TestData])
 async def postGetTest(
     testDetail: vocabSchema.TestDetail = None, 
     authData: userSchema.AuthDetail = Depends(checkAuthenticated),
