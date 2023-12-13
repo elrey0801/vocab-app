@@ -29,6 +29,11 @@ class CreateVocab(VocabSetID):
     
 class Vocab(VocabID, CreateVocab):
     familiarity: int
+    @validator('familiarity')
+    def validateFamiliarity(cls, value):
+        if value < 0 or value > 10:
+            raise HTTPException(status_code=422, detail="Invalid Vocab data:: familiarity must be from 0 to 10")
+        return value
 
 class TestData(Vocab):
     option: list

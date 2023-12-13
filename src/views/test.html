@@ -4,26 +4,35 @@
 <body>
 
     {% include './includes/navigation.html'%}
-<div class="container mt-5">
-    <div id="question-container">
-        <h2>Câu hỏi 1</h2>
-        <p>Đây là nội dung của câu hỏi 1.</p>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer" id="answer1" value="option1">
-            <label class="form-check-label" for="answer1">Lựa chọn 1</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="answer" id="answer2" value="option2">
-            <label class="form-check-label" for="answer2">Lựa chọn 2</label>
-        </div>
-        <!-- Thêm các lựa chọn khác nếu cần -->
-
-        <button class="btn btn-primary mt-3" onclick="nextQuestion()">Tiếp theo</button>
+<div class="container-fluid">
+    <div class="row pt-5 mt-2 justify-content-center align-items-center">
+        <div class="btn-group-vertical col-lg-4 d-flex" role="group" aria-label="Basic radio toggle button group">
+            <label class="btn btn-secondary btn-lg" id="questionNumber">#1/8 Question</label>
+            <label class="btn btn-outline-secondary btn-lg" id="questionWord">Word: Adrenaline</label>
+            <label class="btn btn-outline-secondary btn" id="questionExample">Example: Adrenaline</label>
+            <label class="btn btn-outline-secondary btn" id="questionFamiliarity">This word score: 0</label>
+          </div>
     </div>
+    <div class="row py-3 justify-content-center align-items-center">
+        <div class="btn-group-vertical col-lg-4 d-flex" role="group" aria-label="Basic radio toggle button group">
+            <label class="btn btn-secondary btn-lg">Answer</label>
+            <input type="radio" class="btn-check" name="choice" id="choice-1" autocomplete="off">
+            <label class="btn btn-outline-primary" for="choice-1" id="choice-1-label">Radio 1</label>
+          
+            <input type="radio" class="btn-check" name="choice" id="choice-2" autocomplete="off">
+            <label class="btn btn-outline-primary" for="choice-2" id="choice-2-label">Radio 2</label>
+          
+            <input type="radio" class="btn-check" name="choice" id="choice-3" autocomplete="off">
+            <label class="btn btn-outline-primary" for="choice-3" id="choice-3-label">Radio 3</label>
 
-    <div id="result-container" style="display: none;">
-        <h2>Kết quả</h2>
-        <p id="result-message"></p>
+            <input type="radio" class="btn-check" name="choice" id="choice-4" autocomplete="off">
+            <label class="btn btn-outline-primary" for="choice-4" id="choice-4-label">Radio 4</label>
+          </div>
+    </div>
+    <div class="row py-3 justify-content-center align-items-center">
+        <div class="btn-group-vertical col-lg-2 d-flex" role="group" aria-label="Basic radio toggle button group" id="submitBtn">
+           
+        </div>
     </div>
 </div>
 
@@ -31,25 +40,136 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    let currentQuestion = 1;
+    const HOST = window.location.host.split(':')[0] == 'localhost' ? 'http://localhost:8888' : 'https://' + window.location.host; 
+    let checkTag = `<button id="submitBtn" type="button" class="btn btn-success" onclick="checkAnswer()">Check</button>`
+    let nextTag = `<button id="submitBtn" type="button" class="btn btn" onclick="nextQuestion()" style="background-color:rgb(20, 104, 152); color:white;">Next Question</button>`
+    let endTag = `<button id="submitBtn" type="button" class="btn btn" onclick="nextQuestion()" style="background-color:rgb(20, 104, 152); color:white;">End Test</button>`
+    document.getElementById('submitBtn').innerHTML = checkTag
+    let currentQuestion = 0;
+    var testData = JSON.parse(localStorage.getItem("testData"));
+    if(!testData) window.location.href = HOST + "/vocab-set";
+    console.log(testData);
+    let numOfQuestion = testData.length;
+    let checkEle = null;
 
-    function nextQuestion() {
-        // Xử lý câu hỏi và đáp án ở đây
-        // Có thể sử dụng JavaScript để kiểm tra đáp án và tính điểm
+    function getChoice() {
+        let choiceGroup = document.getElementsByName('choice');
+        for(let ans of choiceGroup)
+            if(ans.checked)
+                return ans.value
+    }
+    function clearChoice() {
+        let choiceGroup = document.getElementsByName('choice');
+        for(let ans of choiceGroup)
+            if(ans.checked)
+                return ans.checked = false
+    }
 
-        // Chuyển sang câu hỏi tiếp theo
-        currentQuestion++;
-        if (currentQuestion <= totalQuestions) {
-            showQuestion(currentQuestion);
+    function updateScore(oldScore, newScore) {
+        let diff = newScore - oldScore;
+        if(diff >= 0)
+            document.getElementById('questionFamiliarity').innerHTML = `<span style="color:green;">This word score: <b>${newScore} (+${diff})</b></span>`
+        else
+        document.getElementById('questionFamiliarity').innerHTML = `<span style="color:red;">This word score: <b>${newScore} (-${diff})</b></span>`
+    }
+
+    function showAnswer(answer) {
+        let choiceGroup = document.getElementsByName('choice');
+        for(let ans of choiceGroup)
+            if(ans.value === answer) {
+                console.log(ans.value, answer);
+                console.log(ans.id + '-label');
+                checkEle = document.getElementById(ans.id + '-label');
+                checkEle.classList.remove('btn-outline-primary');
+                checkEle.classList.add('btn-success');
+            }
+                
+    }
+
+    async function checkAnswer() {
+        let answer = getChoice();
+        let familiarity = testData[currentQuestion].familiarity;
+        let oldScore = familiarity;
+        if(!answer) return;
+        console.log(answer);
+        showAnswer(testData[currentQuestion].meaning)
+        if(answer === testData[currentQuestion].meaning) {
+            if(familiarity < 5) familiarity += 2;
+            else if(familiarity < 10) familiarity++;
         } else {
-            showResult();
+            if(familiarity > 5) familiarity -= 2;
+            else if(familiarity > 0) familiarity--;
+        }
+        updateScore(oldScore, familiarity);
+
+
+        const options = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vocabSetId: testData[currentQuestion].vocabSetId,
+                word: testData[currentQuestion].word,
+                meaning: testData[currentQuestion].meaning,
+                example: testData[currentQuestion].example,
+                familiarity:familiarity,
+                id: testData[currentQuestion].id
+            })
+        };
+        console.log(options);
+        if (currentQuestion < numOfQuestion - 1) 
+            document.getElementById('submitBtn').innerHTML = nextTag
+        else document.getElementById('submitBtn').innerHTML = endTag
+
+
+        try {
+            console.log(options);
+            var response = await fetch(HOST + '/update-vocab', options);
+            if(response.status == 201) console.log('Vocab is updated');
+            else if(response.status == 422) {
+                console.log('Validation Error');
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
-    function showQuestion(questionNumber) {
+    function nextQuestion() {
+        currentQuestion++;
+        checkEle.classList.remove('btn-success');
+        checkEle.classList.add('btn-outline-primary');
+        if (currentQuestion < numOfQuestion) {
+            showQuestion(currentQuestion);
+        } else {
+            localStorage.removeItem("testData");
+            window.location.href = HOST + "/vocab-set";
+        }
+    }
+
+    function showQuestion() {
         // Hiển thị câu hỏi và các lựa chọn tương ứng
-        document.getElementById('question-container').style.display = 'block';
-        document.getElementById('result-container').style.display = 'none';
+        clearChoice();
+        document.getElementById('submitBtn').innerHTML = checkTag
+        let word = testData[currentQuestion].word;
+        let example = testData[currentQuestion].example;
+        let familiarity = testData[currentQuestion].familiarity;
+        document.getElementById('questionNumber').innerHTML = `#${currentQuestion+1}/${numOfQuestion} question`
+        document.getElementById('questionFamiliarity').innerHTML = `This word score: ${familiarity}`
+        document.getElementById('questionWord').innerHTML = `Word: ${word}`
+        document.getElementById('questionExample').innerHTML = `<i>Example: ${example ? example : '<b>No example provided</b>'}</i>`
+
+        let choice1 = testData[currentQuestion].option[0];
+        let choice2 = testData[currentQuestion].option[1];
+        let choice3 = testData[currentQuestion].option[2];
+        let choice4 = testData[currentQuestion].option[3];
+
+        document.getElementById('choice-1-label').innerHTML = choice1
+        document.getElementById('choice-2-label').innerHTML = choice2
+        document.getElementById('choice-3-label').innerHTML = choice3
+        document.getElementById('choice-4-label').innerHTML = choice4
+        document.getElementById('choice-1').value = choice1
+        document.getElementById('choice-2').value = choice2
+        document.getElementById('choice-3').value = choice3
+        document.getElementById('choice-4').value = choice4
     }
 
     function showResult() {
@@ -64,13 +184,9 @@
     function getTheTest() {
         
     }
+    showQuestion(currentQuestion);
 </script>
 
-<script>
-    var testData = JSON.parse(localStorage.getItem("testData"));
-    if(!testData) window.location.href = HOST + "/vocab-set"
-    console.log(testData);
-</script>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </html>

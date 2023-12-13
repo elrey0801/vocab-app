@@ -12,4 +12,5 @@ def makeOptions(setOfMeaning, thisMeaning):
     copyOfSetOfMeaning.discard(thisMeaning)
     randomOption = random.sample(sorted(copyOfSetOfMeaning), 3)
     randomOption.append(thisMeaning)
+    random.shuffle(randomOption)
     return randomOption
