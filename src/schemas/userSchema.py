@@ -8,4 +8,5 @@ class UserLogin(BaseModel):
 
 class AuthDetail(UserLogin):
     id: int
+    token: str | None = None
 

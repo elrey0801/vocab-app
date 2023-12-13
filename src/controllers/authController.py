@@ -18,11 +18,17 @@ load_dotenv(dotenv_path)
 
 SECURITY_ALGORITHM = os.getenv('SECURITY_ALGORITHM')
 SECRET_KEY = os.getenv('SECRET_KEY')
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 class AuthController:
     def __init__(self, db: Session = Depends(getDB)):
         self.db = db
+
+    def getNewToken(self, user):
+        expires_delta = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        token = {'username': user.username, 'password': user.password, "exp": expires_delta}
+        encoded_jwt = jwt.encode(token, SECRET_KEY, algorithm=SECURITY_ALGORITHM)
+        return encoded_jwt
 
     def postLogin(self, authData: userSchema.UserLogin):
         user = self.db.query(userModel.User).filter(userModel.User.username == authData.username).first()
@@ -34,9 +40,8 @@ class AuthController:
             return JSONResponse(content="Login failed", status_code=401)
         logger.info('---User logged in:: ' + user.username)
 
-        expires_delta = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        token = {'username': user.username, 'password': user.password, "exp": expires_delta}
-        encoded_jwt = jwt.encode(token, SECRET_KEY, algorithm=SECURITY_ALGORITHM)
+        
+        encoded_jwt = self.getNewToken(user)
         # print('encoded token::', encoded_jwt)
         # print('decoded token::', jwt.decode(encoded_jwt, SECRET_KEY, algorithms=[SECURITY_ALGORITHM]))
         response = JSONResponse(content="Login successful", status_code=200)
