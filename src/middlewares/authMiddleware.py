@@ -18,7 +18,7 @@ load_dotenv(dotenv_path)
 
 SECURITY_ALGORITHM = os.getenv('SECURITY_ALGORITHM')
 SECRET_KEY = os.getenv('SECRET_KEY')
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
 
 def checkAuthenticated(db: Session = Depends(getDB), access_token: str = Cookie(None)):
     try:
