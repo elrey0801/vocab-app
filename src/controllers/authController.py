@@ -18,7 +18,7 @@ load_dotenv(dotenv_path)
 
 SECURITY_ALGORITHM = os.getenv('SECURITY_ALGORITHM')
 SECRET_KEY = os.getenv('SECRET_KEY')
-ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
 class AuthController:
     def __init__(self, db: Session = Depends(getDB)):
