@@ -66,8 +66,25 @@ class VocabController(VocabUtils):
 
         familiarityWeight = [(11-vocab.familiarity) for vocab in vocabSet]
         returnVocabs = utils.randomUniqueChoices(vocabSet, familiarityWeight, testDetail.numOfVocabs)
-        returnVocabsMeaning = set(m.meaning for m in returnVocabs)
         for r in returnVocabs:
-            r.option = utils.makeOptions(returnVocabsMeaning, r.meaning)
+            r.option = utils.makeOptions(set(m.meaning for m in vocabSet), r.meaning)
         return returnVocabs
     
+    def postPracticeAll(self, numOfVocabs: vocabSchema.NumOfVocabs, authData: userSchema.AuthDetail):
+        vocabSet = self.db.query(vocabModel.Vocab, vocabSetModel.VocabSet).join(vocabModel.Vocab).filter(vocabSetModel.VocabSet.userId == authData.id).all()
+        if len(vocabSet) < 5:
+            return JSONResponse(
+                content={"message": "Get test:: failed, your set need to have at least 5 vocabs to make a test"}, 
+                status_code=400)
+
+        if len(vocabSet) < numOfVocabs.numOfVocabs:
+            return JSONResponse(
+                content={'message': f'Get test:: failed, only have {len(vocabSet)} vocabs (request {numOfVocabs.numOfVocabs})'}, 
+                status_code=400)
+        vocabSet = [v[0] for v in vocabSet]
+
+        familiarityWeight = [(11-vocab.familiarity) for vocab in vocabSet]
+        returnVocabs = utils.randomUniqueChoices(vocabSet, familiarityWeight, numOfVocabs.numOfVocabs)
+        for r in returnVocabs:
+            r.option = utils.makeOptions(set(m.meaning for m in vocabSet), r.meaning)
+        return returnVocabs

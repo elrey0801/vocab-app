@@ -111,3 +111,28 @@ async def postGetTest(
     except Exception as error:
         print(error)
         raise HTTPException(status_code=404, detail="error getting test")
+
+@router.post("/get-test-all", response_model=list[vocabSchema.TestData])
+async def postGetTest(
+    numOfVocabs: vocabSchema.NumOfVocabs = None, 
+    authData: userSchema.AuthDetail = Depends(checkAuthenticated),
+    vocabController: VocabController = Depends()):
+
+    # try:
+    #     response = vocabController.postPracticeAll(numOfVocabs=numOfVocabs, authData=authData)
+    #     response = jsonable_encoder(response)
+    #     response = JSONResponse(content=response)
+    #     response.set_cookie(key="access_token", value=authData.token, httponly=True)
+    #     return response
+    # except HTTPException as error:
+    #     logger.error(error.detail)
+    #     raise error
+    # except Exception as error:
+    #     print(error)
+    #     raise HTTPException(status_code=404, detail="error getting test")
+
+    response = vocabController.postPracticeAll(numOfVocabs=numOfVocabs, authData=authData)
+    response = jsonable_encoder(response)
+    response = JSONResponse(content=response)
+    response.set_cookie(key="access_token", value=authData.token, httponly=True)
+    return response

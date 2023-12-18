@@ -39,12 +39,17 @@ class TestData(Vocab):
     option: list
 
 
-class TestDetail(VocabSetID):
+class NumOfVocabs(BaseModel):
     numOfVocabs: int
-
     @validator('numOfVocabs')
     def validateNumOfVocabs(cls, value):
         if value < 5:
             raise HTTPException(status_code=422, detail="Get test:: failed, you have to request at least 5 vocabs to make a test")
         return value
+
+class TestDetail(VocabSetID, NumOfVocabs):
+    pass
+
+
+
 
