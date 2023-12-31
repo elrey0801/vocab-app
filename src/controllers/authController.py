@@ -13,7 +13,7 @@ from configs.configLogging import configLogging
 configLogging()
 logger = logging.getLogger(__name__)
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '..\..', '.env')
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path)
 
 SECURITY_ALGORITHM = os.getenv('SECURITY_ALGORITHM')

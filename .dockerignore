@@ -1,0 +1,10 @@
+Include
+Lib
+Scripts
+pyvenv.cfg
+__pycache__
+src/.env
+bin
+server.log
+.git
+.dockerignore
